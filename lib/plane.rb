@@ -14,20 +14,4 @@ class Plane
 		@status = "landed"
 	end
 
-
-
-
-
-# def request_to_land_at? airport
-	# 	airport.ok_to_land?
-	# end
-
-	# def land_at airport
-	# 	if request_to_land_at? airport
-	# 		@status = "landed" 
-	# 		airport.landed
-	# 	end
-	# end
-
-
 end

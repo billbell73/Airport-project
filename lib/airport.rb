@@ -21,7 +21,7 @@ class Airport
 	end
 
 	def land plane
-		unless full? 
+		if okay_to_land?
 			@planes_on_ground << plane
 			plane.landed
 		end
@@ -31,14 +31,8 @@ class Airport
 		@planes_on_ground.length == @capacity
 	end
 
-
-	# def ok_to_land?
-	# 	space_available? and good_weather? and no_plane_approaching?
-	# end
-
-	#def landed
-
-
-
+	def okay_to_land?
+		!full? and weather_status == "sunny"
+	end
 
 end

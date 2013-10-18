@@ -7,18 +7,16 @@ require 'airport'
 #
 # If the airport is full then no planes can land
 describe Airport do
+  
   let(:airport) { Airport.new }
 
   let(:plane) {double :plane}
   
-  it 'has a default capacity of 3 when created' do
-    expect(airport.capacity).to eq 3
-  end
+    it 'has a default capacity of 3 when created' do
+      expect(airport.capacity).to eq 3
+    end
 
-  # it 'can check weather status' do
-  #   expect(airport.weather_status).to eq "sunny" or "stormy"
-  # end
-
+  
   context 'taking off and landing' do
 
     it 'a plane can land' do
@@ -54,7 +52,7 @@ describe Airport do
   end
 
   
-  # context 'traffic control' do
+  context 'traffic control' do
 
       it 'can tell if it is full' do
         plane = double :plane, {:landed => nil}
@@ -86,6 +84,7 @@ describe Airport do
         airport.land plane4
         expect(airport.planes_on_ground.include?(plane4)).to eq false
       end
+  end
     
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
@@ -93,24 +92,30 @@ describe Airport do
     # 
     # This will require stubbing to stop the random return of the weather.
     # If the airport has a weather condition of stormy,
-    # the plane can not land, and must not be in the airport
-#     context 'weather conditions' do
-#       it 'a plane cannot take off when there is a storm brewing' do
-#       end
+  #   the plane can not land, and must not be in the airport
+
+    context 'weather conditions' do
+
+      it 'can check weather status' do
+        airport = double :airport, {weather_status: "sunny"}
+        expect(airport.weather_status).to eq "sunny"
+      end
+
+      it 'can tell whether okay to land' do
+        airport = double :airport, {:full? => false, :weather_status => "sunny", :okay_to_land? => true}
+        expect(airport.okay_to_land?).to be_true
+      end
+
+      # it 'a plane cannot take off when there is a storm brewing' do
+      #   expect()
+      # end
       
-#       it 'a plane cannot land in the middle of a storm' do
-#       end
-#     end
-#   end
+      it 'a plane cannot land in the middle of a storm' do
+        plane = double :plane, {:landed => nil}
+        airport.land plane
+        expect(airport.planes_on_ground).to eq []
+      end
 
-
-# it 'can respond to request to land' do
-  #   plane = double :plane
-
-  # end
-
-# it 'knows when a plane has landed' do
-  #   plane = double :planes
-  #   airport.landed
-  # end
+    end
 end
+
