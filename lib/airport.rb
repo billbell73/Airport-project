@@ -6,9 +6,9 @@ class Airport
 
 	attr_reader :capacity, :planes_on_ground
 
-	def initialize(capacity=3)
+	def initialize(capacity = 3, planes_on_ground = [])
 		@capacity = capacity
-		@planes_on_ground = []
+		@planes_on_ground = planes_on_ground
 	end
 
 	def request_take_off_to plane
@@ -21,8 +21,14 @@ class Airport
 	end
 
 	def land plane
-		@planes_on_ground << plane
-		plane.landed
+		unless full? 
+			@planes_on_ground << plane
+			plane.landed
+		end
+	end
+
+	def full?
+		@planes_on_ground.length == @capacity
 	end
 
 

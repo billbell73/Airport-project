@@ -50,13 +50,42 @@ describe Airport do
       expect(airport.remove_from_planes_on_ground plane).to eq plane
       airport.request_take_off_to plane
     end
-    
+
   end
 
   
   # context 'traffic control' do
-  #   it 'a plane cannot land if the airport is full' do
-  #   end
+
+      it 'can tell if it is full' do
+        plane = double :plane, {:landed => nil}
+        plane2 = double :plane2, {:landed => nil}
+        plane3 = double :plane3, {:landed => nil}
+        airport.land plane
+        airport.land plane2
+        airport.land plane3
+        expect(airport.full?).to eq true
+      end
+
+      it 'can tell if it is not full' do
+        plane = double :plane, {:landed => nil}
+        plane2 = double :plane2, {:landed => nil}
+        airport.land plane
+        airport.land plane2
+        expect(airport.full?).to eq false
+      end
+
+
+      it 'a plane cannot land if the airport is full' do
+        plane = double :plane, {:landed => nil}
+        plane2 = double :plane2, {:landed => nil}
+        plane3 = double :plane3, {:landed => nil}
+        airport.land plane
+        airport.land plane2
+        airport.land plane3
+        plane4 = double :plane4, {:landed => nil}
+        airport.land plane4
+        expect(airport.planes_on_ground.include?(plane4)).to eq false
+      end
     
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
