@@ -1,9 +1,7 @@
 module Weather
 
 	def weather_status
-		# ["sunny", "stormy"].sample
-		"sunny"
-		# "stormy"
+		["sunny", "sunny", "stormy"].sample
 	end
 
 end

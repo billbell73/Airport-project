@@ -6,6 +6,7 @@ require 'airport'
 # It is up to you how many planes can land in the airport and how that is impermented.
 #
 # If the airport is full then no planes can land
+
 describe Airport do
   
   let(:airport) { Airport.new }
@@ -20,12 +21,14 @@ describe Airport do
   context 'taking off and landing' do
 
     it 'a plane can land' do
+      airport.stub(:weather_good? => true)
       plane = double :plane, {:landed => nil}
       airport.land plane
       expect(airport.planes_on_ground).to eq [plane]
     end
 
     it 'a plane is told that it has landed' do
+      airport.stub(:weather_good? => true)
       expect(plane).to receive (:landed)
       airport.land plane
     end
@@ -37,12 +40,14 @@ describe Airport do
   # end
 
     it 'can request that a plane takes off' do
+      airport.stub(:weather_good? => true)
       plane = double :plane
       expect(plane).to receive (:take_off)
       airport.request_take_off_to plane
     end
 
     it 'after take-off, plane is no longer at airport' do
+      airport.stub(:weather_good? => true)
       plane = double :plane, { take_off: nil, landed: nil }
       airport.land plane
       expect(airport.remove_from_planes_on_ground plane).to eq plane
@@ -55,6 +60,7 @@ describe Airport do
   context 'traffic control' do
 
       it 'can tell if it is full' do
+        airport.stub(:weather_good? => true)
         plane = double :plane, {:landed => nil}
         plane2 = double :plane2, {:landed => nil}
         plane3 = double :plane3, {:landed => nil}
@@ -65,6 +71,7 @@ describe Airport do
       end
 
       it 'can tell if it is not full' do
+        airport.stub(:weather_good? => true)
         plane = double :plane, {:landed => nil}
         plane2 = double :plane2, {:landed => nil}
         airport.land plane
@@ -74,6 +81,7 @@ describe Airport do
 
 
       it 'a plane cannot land if the airport is full' do
+        airport.stub(:weather_good? => true)
         plane = double :plane, {:landed => nil}
         plane2 = double :plane2, {:landed => nil}
         plane3 = double :plane3, {:landed => nil}
@@ -97,32 +105,32 @@ describe Airport do
     context 'weather conditions' do
 
       it 'can check weather status' do
-        # airport = double :airport, {weather_status: "sunny"}
+        airport = double :airport, {weather_status: "sunny"}
         expect(airport.weather_status).to eq "sunny"
       end
 
       it 'can tell whether okay to land' do
-        # airport = double :airport, {:full? => false, :weather_status => "sunny", :okay_to_land? => true}
+        airport.stub(:weather_good? => true)
         expect(airport.okay_to_land?).to be_true
       end
 
       it 'can tell if weather good' do
+        airport.stub(:weather_good? => true)
         expect(airport.weather_good?).to be_true
       end
 
-
-
-
-      # it 'a plane cannot take off when there is a storm brewing' do
-      #   airport.request_take_off_to plane
-      #   expect(plane).not_to receive (:take_off)
-      # end
+      it 'a plane cannot take off when there is a storm brewing' do
+        airport.stub(:weather_good? => false)
+        airport.request_take_off_to plane
+        expect(plane).not_to receive (:take_off)
+      end
       
-      # it 'a plane cannot land in the middle of a storm' do
-      #   plane = double :plane, {:landed => nil}
-      #   airport.land plane
-      #   expect(airport.planes_on_ground).to eq []
-      # end
+      it 'a plane cannot land in the middle of a storm' do
+        airport.stub(:weather_good? => false)
+        plane = double :plane, {:landed => nil}
+        airport.land plane
+        expect(airport.planes_on_ground).to eq []
+      end
 
     end
 end
