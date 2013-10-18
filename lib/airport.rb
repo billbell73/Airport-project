@@ -6,14 +6,16 @@ class Airport
 
 	attr_reader :capacity, :planes_on_ground
 
-	def initialize(capacity = 3, planes_on_ground = [])
+	def initialize(capacity = 3)
 		@capacity = capacity
-		@planes_on_ground = planes_on_ground
+		@planes_on_ground = []
 	end
 
 	def request_take_off_to plane
-		plane.take_off
-		remove_from_planes_on_ground plane
+		if weather_good?
+			plane.take_off
+			remove_from_planes_on_ground plane
+		end
 	end
 
 	def remove_from_planes_on_ground plane
@@ -32,7 +34,11 @@ class Airport
 	end
 
 	def okay_to_land?
-		!full? and weather_status == "sunny"
+		!full? and weather_good?
+	end
+
+	def weather_good?
+		weather_status == "sunny"
 	end
 
 end

@@ -97,24 +97,32 @@ describe Airport do
     context 'weather conditions' do
 
       it 'can check weather status' do
-        airport = double :airport, {weather_status: "sunny"}
+        # airport = double :airport, {weather_status: "sunny"}
         expect(airport.weather_status).to eq "sunny"
       end
 
       it 'can tell whether okay to land' do
-        airport = double :airport, {:full? => false, :weather_status => "sunny", :okay_to_land? => true}
+        # airport = double :airport, {:full? => false, :weather_status => "sunny", :okay_to_land? => true}
         expect(airport.okay_to_land?).to be_true
       end
 
+      it 'can tell if weather good' do
+        expect(airport.weather_good?).to be_true
+      end
+
+
+
+
       # it 'a plane cannot take off when there is a storm brewing' do
-      #   expect()
+      #   airport.request_take_off_to plane
+      #   expect(plane).not_to receive (:take_off)
       # end
       
-      it 'a plane cannot land in the middle of a storm' do
-        plane = double :plane, {:landed => nil}
-        airport.land plane
-        expect(airport.planes_on_ground).to eq []
-      end
+      # it 'a plane cannot land in the middle of a storm' do
+      #   plane = double :plane, {:landed => nil}
+      #   airport.land plane
+      #   expect(airport.planes_on_ground).to eq []
+      # end
 
     end
 end
