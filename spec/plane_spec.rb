@@ -13,31 +13,10 @@ describe Plane do
     expect(plane.status).to eq "flying"
   end
 
-  it 'can request to land at an airport' do
-    airport = double :airport
-    expect(airport).to receive (:ok_to_land?)
-    plane.request_to_land_at? airport
+  it 'can take off' do
+    plane.take_off
+    expect(plane.status).to eq "flying"
   end
-
-  it 'can land after receiving airport\'s permission' do
-    airport = double :airport, {:ok_to_land? => true, :landed => nil}
-    plane.request_to_land_at? airport
-    plane.land_at airport
-    expect(plane.status).to eq "landed"
-  end
-
-  it "tells airport when it lands" do
-    airport = double :airport, {:ok_to_land? => true, :landed => nil}
-    expect(airport).to receive(:landed)
-    plane.land_at airport
-  end
-  
-  # it 'has a flying status when in the air' do
-  # end
-  
-  # it 'can take off' do
-
-  # end
   
 #   it 'changes its status to flying after taking of' do
 #   end
@@ -51,4 +30,30 @@ describe Plane do
 # describe "The gand finale (last spec)" do
 #   it 'all planes can land and all planes can take off' do
 #   end
+
+
+
+
+# it 'can request to land at an airport' do
+  #   airport = double :airport
+  #   expect(airport).to receive (:ok_to_land?)
+  #   plane.request_to_land_at? airport
+  # end
+
+  # it 'can land after receiving airport\'s permission' do
+  #   airport = double :airport, {:ok_to_land? => true, :landed => nil}
+  #   plane.request_to_land_at? airport
+  #   plane.land_at airport
+  #   expect(plane.status).to eq "landed"
+  # end
+
+  # it "tells airport when it lands" do
+  #   airport = double :airport, {:ok_to_land? => true, :landed => nil}
+  #   expect(airport).to receive(:landed)
+  #   plane.land_at airport
+  # end
+  
+  
+  # it 'has a flying status when in the air' do
+  # end
 end

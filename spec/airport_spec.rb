@@ -13,10 +13,7 @@ describe Airport do
     expect(airport.capacity).to eq 3
   end
 
-  # it 'can respond to request to land' do
-  #   plane = double :plane
-
-  # end
+  
 
   it 'can request that a plane takes off' do
     plane = double :plane
@@ -24,10 +21,7 @@ describe Airport do
     airport.request_take_off_to plane
   end
 
-  # it 'knows when a plane has landed' do
-  #   plane = double :planes
-  #   airport.landed
-  # end
+  
 
   it 'can check weather status' do
     expect(airport.weather_status).to eq "sunny" or "stormy"
@@ -37,9 +31,11 @@ describe Airport do
 
   # context 'taking off and landing' do
 
-  #   it 'a plane can land' do
-
-  #   end
+    it 'a plane can land' do
+      plane = double :plane
+      airport.land plane
+      expect(airport.planes_on_ground).to eq [plane]
+    end
     
   #   it 'a plane can take off' do
   #   end
@@ -64,4 +60,15 @@ describe Airport do
 #       end
 #     end
 #   end
+
+
+# it 'can respond to request to land' do
+  #   plane = double :plane
+
+  # end
+
+# it 'knows when a plane has landed' do
+  #   plane = double :planes
+  #   airport.landed
+  # end
 end
