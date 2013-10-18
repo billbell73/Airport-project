@@ -1,6 +1,8 @@
-#something
+require_relative 'weather'
 
 class Airport
+
+	include Weather
 
 	attr_reader :capacity
 
@@ -13,8 +15,10 @@ class Airport
 	end
 
 	# def ok_to_land?
-	# 	true
+	# 	space_available? and good_weather? and no_plane_approaching?
 	# end
+
+	#def landed
 
 
 

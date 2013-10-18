@@ -24,6 +24,15 @@ describe Airport do
     airport.request_take_off_to plane
   end
 
+  # it 'knows when a plane has landed' do
+  #   plane = double :planes
+  #   airport.landed
+  # end
+
+  it 'can check weather status' do
+    expect(airport.weather_status).to eq "sunny" or "stormy"
+  end
+
 
 
   # context 'taking off and landing' do
