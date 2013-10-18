@@ -8,38 +8,51 @@ require 'airport'
 # If the airport is full then no planes can land
 describe Airport do
   let(:airport) { Airport.new }
+
+  let(:plane) {double :plane}
   
   it 'has a default capacity of 3 when created' do
     expect(airport.capacity).to eq 3
   end
 
-  
+  # it 'can check weather status' do
+  #   expect(airport.weather_status).to eq "sunny" or "stormy"
+  # end
 
-  it 'can request that a plane takes off' do
-    plane = double :plane
-    expect(plane).to receive (:take_off_please)
-    airport.request_take_off_to plane
-  end
-
-  
-
-  it 'can check weather status' do
-    expect(airport.weather_status).to eq "sunny" or "stormy"
-  end
-
-
-
-  # context 'taking off and landing' do
+  context 'taking off and landing' do
 
     it 'a plane can land' do
-      plane = double :plane
+      plane = double :plane, {:landed => nil}
       airport.land plane
       expect(airport.planes_on_ground).to eq [plane]
     end
+
+    it 'a plane is told that it has landed' do
+      expect(plane).to receive (:landed)
+      airport.land plane
+    end
+
+
     
   #   it 'a plane can take off' do
   #   end
   # end
+
+    it 'can request that a plane takes off' do
+      plane = double :plane
+      expect(plane).to receive (:take_off)
+      airport.request_take_off_to plane
+    end
+
+    it 'after take-off, plane is no longer at airport' do
+      plane = double :plane, { take_off: nil, landed: nil }
+      airport.land plane
+      expect(airport.remove_from_planes_on_ground plane).to eq plane
+      airport.request_take_off_to plane
+    end
+    
+  end
+
   
   # context 'traffic control' do
   #   it 'a plane cannot land if the airport is full' do

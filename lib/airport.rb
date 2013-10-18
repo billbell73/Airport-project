@@ -12,11 +12,17 @@ class Airport
 	end
 
 	def request_take_off_to plane
-		plane.take_off_please
+		plane.take_off
+		remove_from_planes_on_ground plane
+	end
+
+	def remove_from_planes_on_ground plane
+		@planes_on_ground.delete(plane)
 	end
 
 	def land plane
 		@planes_on_ground << plane
+		plane.landed
 	end
 
 

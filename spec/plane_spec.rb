@@ -17,10 +17,22 @@ describe Plane do
     plane.take_off
     expect(plane.status).to eq "flying"
   end
+
+  it 'changes its status to flying after taking off' do
+    plane.landed
+    plane.take_off
+    expect(plane.status).to eq "flying"
+  end
+
+
+  it 'is knows it is on ground when it has landed' do
+    plane.landed
+    expect(plane.status).to eq "landed"
+  end
+
+end
   
-#   it 'changes its status to flying after taking of' do
-#   end
-# end
+
 
 # grand final
 # Given 6 planes, each plane must land. When the airport is full, every plane must take off again.
@@ -56,4 +68,4 @@ describe Plane do
   
   # it 'has a flying status when in the air' do
   # end
-end
+#end

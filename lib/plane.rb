@@ -10,6 +10,12 @@ class Plane
 		@status = "flying"
 	end
 
+	def landed
+		@status = "landed"
+	end
+
+
+
 
 
 # def request_to_land_at? airport
