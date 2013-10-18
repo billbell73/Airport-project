@@ -17,7 +17,6 @@ describe Airport do
       expect(airport.capacity).to eq 3
     end
 
-  
   context 'taking off and landing' do
 
     it 'a plane can land' do
@@ -32,12 +31,14 @@ describe Airport do
       expect(plane).to receive (:landed)
       airport.land plane
     end
-
-
     
-  #   it 'a plane can take off' do
-  #   end
-  # end
+    it 'a plane can take off' do
+      airport.stub(:weather_good? => true)
+      plane = double :plane, {:take_off => nil, :landed => nil}
+      airport.land plane
+      airport.request_take_off_to plane
+      expect(airport.planes_on_ground).to eq []
+    end
 
     it 'can request that a plane takes off' do
       airport.stub(:weather_good? => true)

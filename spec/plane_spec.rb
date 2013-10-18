@@ -5,6 +5,7 @@ require 'plane'
 # When we land a plane at the airport, the plane in question should have its status changed to "landed"
 #
 # When the plane takes of from the airport, the plane's status should become "flying"
+
 describe Plane do
 
   let(:plane) { Plane.new }
@@ -13,8 +14,10 @@ describe Plane do
     expect(plane.status).to eq "flying"
   end
 
-  # it 'has a flying status when in the air' do
-  # end
+  it 'has a flying status when in the air' do
+    plane.take_off
+    expect(plane.status).to eq "flying"
+  end
 
   it 'can request to land at an airport' do
     airport = double :airport
@@ -34,7 +37,6 @@ describe Plane do
     plane.land_at airport
     expect(plane.status).to eq "flying"
   end
-
 
   it 'can take off' do
     plane.take_off
