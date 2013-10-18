@@ -6,11 +6,13 @@ class Plane
 		@status = "flying"
 	end
 
-	# def request_to_land_at airport
+	def request_to_land_at airport
+		airport.ok_to_land?
+	end
 
-	# def land
-	# 	@status = "landed"
-	# end
+	def land_at airport
+		@status = "landed" if request_to_land_at airport
+	end
 
 	#def take_off
 

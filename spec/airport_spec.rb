@@ -13,7 +13,15 @@ describe Airport do
     expect(airport.capacity).to eq 3
   end
 
-  it 'can respond to request to land' do
+  # it 'can respond to request to land' do
+  #   plane = double :plane
+
+  # end
+
+  it 'can request that a plane takes off' do
+    plane = double :plane
+    expect(plane).to receive (:take_off_please)
+    airport.request_take_off_to plane
   end
 
 

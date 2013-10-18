@@ -13,13 +13,18 @@ describe Plane do
     expect(plane.status).to eq "flying"
   end
 
-  # it 'can request to land' do
-  #   expect()
+  it 'can request to land at an airport' do
+    airport = double :airport
+    expect(airport).to receive (:ok_to_land?)
+    plane.request_to_land_at airport
+  end
 
-  # it 'can land' do
-  #   plane.land
-  #   expect(plane.status).to eq "landed"
-  # end
+  it 'can land after receiving airport\'s permission' do
+    airport = double :airport, {:ok_to_land? => true}
+    plane.request_to_land_at airport
+    plane.land_at airport
+    expect(plane.status).to eq "landed"
+  end
   
   # it 'has a flying status when in the air' do
   # end
