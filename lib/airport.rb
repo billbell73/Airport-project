@@ -13,7 +13,7 @@ class Airport
 
 	def request_take_off_to plane
 		if weather_good?
-			plane.take_off
+			plane.do_requested_take_off
 			remove_from_planes_on_ground plane
 		end
 	end
@@ -22,10 +22,10 @@ class Airport
 		@planes_on_ground.delete(plane)
 	end
 
-	def land plane
+	def let_land plane
 		if okay_to_land?
 			@planes_on_ground << plane
-			plane.landed
+			plane.confirm_landing
 		end
 	end
 
@@ -35,10 +35,6 @@ class Airport
 
 	def okay_to_land?
 		!full? and weather_good?
-	end
-
-	def weather_good?
-		weather_status == "sunny"
 	end
 
 end

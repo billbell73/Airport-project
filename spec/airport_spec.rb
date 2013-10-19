@@ -11,46 +11,50 @@ describe Airport do
   
   let(:airport) { Airport.new }
 
-  let(:plane) {double :plane}
+  let(:plane) { double :plane }
+
+  context 'capacity' do
   
     it 'has a default capacity of 3 when created' do
       expect(airport.capacity).to eq 3
     end
 
+  end
+
   context 'taking off and landing' do
 
     it 'a plane can land' do
-      airport.stub(:weather_good? => true)
-      plane = double :plane, {:landed => nil}
-      airport.land plane
+      airport.stub(weather_good?: true)
+      plane = double :plane, confirm_landing: nil
+      airport.let_land plane
       expect(airport.planes_on_ground).to eq [plane]
     end
 
-    it 'a plane is told that it has landed' do
-      airport.stub(:weather_good? => true)
-      expect(plane).to receive (:landed)
-      airport.land plane
+    it 'a message goes to plane confirming landing' do
+      airport.stub(weather_good?: true)
+      expect(plane).to receive (:confirm_landing)
+      airport.let_land plane
     end
     
     it 'a plane can take off' do
-      airport.stub(:weather_good? => true)
-      plane = double :plane, {:take_off => nil, :landed => nil}
-      airport.land plane
+      airport.stub(weather_good?: true)
+      plane = double :plane, do_requested_take_off: nil, confirm_landing: nil
+      airport.let_land plane
       airport.request_take_off_to plane
       expect(airport.planes_on_ground).to eq []
     end
 
-    it 'can request that a plane takes off' do
+    it 'airport can request that a plane takes off' do
       airport.stub(:weather_good? => true)
       plane = double :plane
-      expect(plane).to receive (:take_off)
+      expect(plane).to receive (:do_requested_take_off)
       airport.request_take_off_to plane
     end
 
     it 'after take-off, plane is no longer at airport' do
       airport.stub(:weather_good? => true)
-      plane = double :plane, { take_off: nil, landed: nil }
-      airport.land plane
+      plane = double :plane, { do_requested_take_off: nil, confirm_landing: nil }
+      airport.let_land plane
       expect(airport.remove_from_planes_on_ground plane).to eq plane
       airport.request_take_off_to plane
     end
@@ -60,37 +64,37 @@ describe Airport do
   
   context 'traffic control' do
 
-      it 'can tell if it is full' do
+      it 'can tell if airport is full' do
         airport.stub(:weather_good? => true)
-        plane = double :plane, {:landed => nil}
-        plane2 = double :plane2, {:landed => nil}
-        plane3 = double :plane3, {:landed => nil}
-        airport.land plane
-        airport.land plane2
-        airport.land plane3
+        plane = double :plane, {:confirm_landing => nil}
+        plane2 = double :plane2, {:confirm_landing => nil}
+        plane3 = double :plane3, {:confirm_landing => nil}
+        airport.let_land plane
+        airport.let_land plane2
+        airport.let_land plane3
         expect(airport.full?).to eq true
       end
 
-      it 'can tell if it is not full' do
+      it 'can tell if airport is not full' do
         airport.stub(:weather_good? => true)
-        plane = double :plane, {:landed => nil}
-        plane2 = double :plane2, {:landed => nil}
-        airport.land plane
-        airport.land plane2
+        plane = double :plane, {:confirm_landing => nil}
+        plane2 = double :plane2, {:confirm_landing => nil}
+        airport.let_land plane
+        airport.let_land plane2
         expect(airport.full?).to eq false
       end
 
 
-      it 'a plane cannot land if the airport is full' do
+      it 'a plane cannot land if airport is full' do
         airport.stub(:weather_good? => true)
-        plane = double :plane, {:landed => nil}
-        plane2 = double :plane2, {:landed => nil}
-        plane3 = double :plane3, {:landed => nil}
-        airport.land plane
-        airport.land plane2
-        airport.land plane3
-        plane4 = double :plane4, {:landed => nil}
-        airport.land plane4
+        plane = double :plane, {:confirm_landing => nil}
+        plane2 = double :plane2, {:confirm_landing => nil}
+        plane3 = double :plane3, {:confirm_landing => nil}
+        airport.let_land plane
+        airport.let_land plane2
+        airport.let_land plane3
+        plane4 = double :plane4, {:confirm_landing => nil}
+        airport.let_land plane4
         expect(airport.planes_on_ground.include?(plane4)).to eq false
       end
   end
@@ -110,29 +114,57 @@ describe Airport do
         expect(airport.weather_status).to eq "sunny"
       end
 
-      it 'can tell whether okay to land' do
-        airport.stub(:weather_good? => true)
-        expect(airport.okay_to_land?).to be_true
-      end
+      # it 'can tell whether okay to land' do
+      #   airport.stub(:weather_good? => true)
+      #   expect(airport.okay_to_land?).to be_true
+      # end
 
       it 'can tell if weather good' do
         airport.stub(:weather_good? => true)
         expect(airport.weather_good?).to be_true
       end
 
-      it 'a plane cannot take off when there is a storm brewing' do
+      it 'a plane cannot do requested take off when storm brewing' do
         airport.stub(:weather_good? => false)
         airport.request_take_off_to plane
-        expect(plane).not_to receive (:take_off)
+        expect(plane).not_to receive (:do_requested_take_off)
       end
       
       it 'a plane cannot land in the middle of a storm' do
         airport.stub(:weather_good? => false)
-        plane = double :plane, {:landed => nil}
-        airport.land plane
+        plane = double :plane, {:confirm_landing => nil}
+        airport.let_land plane
         expect(airport.planes_on_ground).to eq []
       end
 
     end
+
+    context 'weather conditions & airport capacity' do
+
+      it 'can tell if okay to land' do
+        airport.stub(:weather_good? => true)
+        expect(airport.okay_to_land?).to be_true
+      end
+
+      it 'can tell that not okay to land if weather bad' do
+        airport.stub(:weather_good? => false)
+        expect(airport.okay_to_land?).to be_false
+      end
+
+      it 'can tell that not okay to land if airport full' do
+        airport.stub(:weather_good? => true)
+        plane = double :plane, {:confirm_landing => nil}
+        plane2 = double :plane2, {:confirm_landing => nil}
+        plane3 = double :plane3, {:confirm_landing => nil}
+        airport.let_land plane
+        airport.let_land plane2
+        airport.let_land plane3
+        expect(airport.okay_to_land?).to be_false
+      end
+
+
+
+    end
+
 end
 

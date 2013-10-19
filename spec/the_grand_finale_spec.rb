@@ -9,6 +9,8 @@ require 'airport'
 
 describe "The grand finale (last spec)" do
 
+	let (:airport) { Airport.new(6) }
+
 	let (:plane1) { Plane.new }
 	let (:plane2) { Plane.new }
 	let (:plane3) { Plane.new }
@@ -16,11 +18,8 @@ describe "The grand finale (last spec)" do
 	let (:plane5) { Plane.new }
 	let (:plane6) { Plane.new }
 	let (:plane7) { Plane.new }
-
-	let (:airport) { Airport.new(6) }
-
-
-		it 'all planes can land' do
+	
+		it 'all planes can land and all planes can take off' do
 			airport.stub(:weather_good? => true)
 			plane1.land_at airport
 			plane2.land_at airport

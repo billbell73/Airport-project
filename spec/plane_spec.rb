@@ -10,49 +10,72 @@ describe Plane do
 
   let(:plane) { Plane.new }
   
-  it 'has a flying status when created' do
-    expect(plane.status).to eq "flying"
+  context 'status' do
+    
+    it 'has \'flying\' status when created' do
+      expect(plane.status).to eq "flying"
+    end
+
+    it 'has \'flying\' status when in the air' do
+      plane.do_requested_take_off
+      expect(plane.status).to eq "flying"
+    end
+
   end
 
-  it 'has a flying status when in the air' do
-    plane.take_off
-    expect(plane.status).to eq "flying"
+  context 'landing' do
+
+    it 'can request to land at an airport' do
+      airport = double :airport
+      expect(airport).to receive (:okay_to_land?)
+      plane.request_to_land_at? airport
+    end
+
+    it 'can land after receiving airport\'s permission' do
+      airport = double :airport, {:okay_to_land? => true, :let_land => plane.confirm_landing}
+      plane.request_to_land_at? airport
+      plane.land_at airport
+      expect(plane.status).to eq "landed"
+    end
+
+    it 'will not land if airport says no' do
+      airport = double :airport, {:okay_to_land? => false}  #, :land => plane.confirm_landing}
+      plane.land_at airport
+      expect(plane.status).to eq "flying"
+    end
+
+    it 'knows when it has landed' do
+      plane.confirm_landing
+      expect(plane.status).to eq "landed"
+    end
+
   end
 
-  it 'can request to land at an airport' do
-    airport = double :airport
-    expect(airport).to receive (:okay_to_land?)
-    plane.request_to_land_at? airport
-  end
+  context 'taking off' do
 
-  it 'can land after receiving airport\'s permission' do
-    airport = double :airport, {:okay_to_land? => true, :land => plane.landed}
-    plane.request_to_land_at? airport
-    plane.land_at airport
-    expect(plane.status).to eq "landed"
-  end
+    it 'will take off when asked to by airport' do
+      plane.do_requested_take_off
+      expect(plane.status).to eq "flying"
+    end
 
-  it 'will not land if airport says no' do
-    airport = double :airport, {:okay_to_land? => false}  #, :land => plane.landed}
-    plane.land_at airport
-    expect(plane.status).to eq "flying"
-  end
+    it 'changes its status to \'flying\' after taking off' do
+      plane.confirm_landing
+      plane.do_requested_take_off
+      expect(plane.status).to eq "flying"
+    end
 
-  it 'can take off' do
-    plane.take_off
-    expect(plane.status).to eq "flying"
-  end
+    
 
-  it 'changes its status to flying after taking off' do
-    plane.landed
-    plane.take_off
-    expect(plane.status).to eq "flying"
-  end
+  # it 'can do non-requested take-off if weather okay' do
 
-  it 'knows it is on ground when it has landed' do
-    plane.landed
-    expect(plane.status).to eq "landed"
-  end
+  # end
+
+  # it 'informs airport that has taken off after non-requested take-off' do
+
+  # end 
+
+  end  
+
 
 end
 
