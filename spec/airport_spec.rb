@@ -1,4 +1,5 @@
 require 'airport'
+require 'weather_inquirer_spec'
 
 # A plane currently in the airport can be requested to take off.
 #
@@ -12,6 +13,8 @@ describe Airport do
   let(:airport) { Airport.new }
 
   let(:plane) { double :plane }
+
+  it_behaves_like 'a weather inquirer'
 
   context 'capacity' do
   
@@ -51,12 +54,20 @@ describe Airport do
       airport.request_take_off_to plane
     end
 
-    it 'after take-off, plane is no longer at airport' do
+    it 'after such take-off, plane is no longer at airport' do
       airport.stub(:weather_good? => true)
       plane = double :plane, { do_requested_take_off: nil, confirm_landing: nil }
       airport.let_land plane
       expect(airport.remove_from_planes_on_ground plane).to eq plane
       airport.request_take_off_to plane
+    end
+
+    it 'after non-requested take-off, plane also gone' do
+      airport.stub(:weather_good? => true)
+      plane = double :plane, confirm_landing: nil
+      airport.let_land plane
+      expect(airport.remove_from_planes_on_ground plane).to eq plane
+      airport.confirm_took_off plane
     end
 
   end
@@ -97,7 +108,20 @@ describe Airport do
         airport.let_land plane4
         expect(airport.planes_on_ground.include?(plane4)).to eq false
       end
-  end
+
+      it 'returns message if plane tries to land but airport full' do
+        airport.stub(:weather_good? => true)
+        plane = double :plane, {:confirm_landing => nil}
+        plane2 = double :plane2, {:confirm_landing => nil}
+        plane3 = double :plane3, {:confirm_landing => nil}
+        airport.let_land plane
+        airport.let_land plane2
+        airport.let_land plane3
+        plane4 = double :plane4, {:confirm_landing => nil}
+        expect(airport.let_land plane4).to eq "Sorry. Cannot land - airport full!"
+      end
+
+    end
     
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
@@ -109,25 +133,30 @@ describe Airport do
 
     context 'weather conditions' do
 
-      it 'can check weather status' do
-        airport = double :airport, {weather_status: "sunny"}
-        expect(airport.weather_status).to eq "sunny"
-      end
+      # it 'can check weather status' do
+      #   airport = double :airport, {weather_status: "sunny"}
+      #   expect(airport.weather_status).to eq "sunny"
+      # end
 
       # it 'can tell whether okay to land' do
       #   airport.stub(:weather_good? => true)
       #   expect(airport.okay_to_land?).to be_true
       # end
 
-      it 'can tell if weather good' do
-        airport.stub(:weather_good? => true)
-        expect(airport.weather_good?).to be_true
-      end
+      # it 'can tell if weather good' do
+      #   airport.stub(:weather_good? => true)
+      #   expect(airport.weather_good?).to be_true
+      # end
 
       it 'a plane cannot do requested take off when storm brewing' do
         airport.stub(:weather_good? => false)
         airport.request_take_off_to plane
         expect(plane).not_to receive (:do_requested_take_off)
+      end
+
+      it 'returns message if too stormy for take-off' do
+        airport.stub(:weather_good? => false)
+        expect(airport.request_take_off_to plane).to eq "Sorry. Too Stormy to take off"
       end
       
       it 'a plane cannot land in the middle of a storm' do
@@ -135,6 +164,12 @@ describe Airport do
         plane = double :plane, {:confirm_landing => nil}
         airport.let_land plane
         expect(airport.planes_on_ground).to eq []
+      end
+
+      it 'returns message if too stormy to land' do
+        airport.stub(:weather_good? => false)
+        plane = double :plane, {:confirm_landing => nil}
+        expect(airport.let_land plane).to eq "Sorry. Too Stormy to land. Good luck!"
       end
 
     end

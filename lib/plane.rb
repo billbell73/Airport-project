@@ -1,4 +1,8 @@
+require_relative 'weather_station'
+
 class Plane
+
+	include WeatherStation
 
 	attr_reader :status
 
@@ -15,13 +19,16 @@ class Plane
   end
 
   def land_at airport
-  	if request_to_land_at? airport
   		airport.let_land self
-  	end
   end
 
-  def take_off
-		@status = "flying"
+  def take_off_from airport
+  	if weather_good?
+			@status = "flying"
+			airport.confirm_took_off self
+		else
+			stormy_abort_take_off_msg
+		end
 	end
 
 	def confirm_landing

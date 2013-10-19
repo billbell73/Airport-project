@@ -1,4 +1,5 @@
 require 'plane'
+require 'weather_inquirer_spec'
 
 # When we create a new plane, it should have a "flying" status, thus planes can not be created in the airport.
 #
@@ -9,6 +10,9 @@ require 'plane'
 describe Plane do
 
   let(:plane) { Plane.new }
+  let(:airport) {double :airport}
+
+  it_behaves_like 'a weather inquirer'
   
   context 'status' do
     
@@ -26,7 +30,6 @@ describe Plane do
   context 'landing' do
 
     it 'can request to land at an airport' do
-      airport = double :airport
       expect(airport).to receive (:okay_to_land?)
       plane.request_to_land_at? airport
     end
@@ -39,7 +42,7 @@ describe Plane do
     end
 
     it 'will not land if airport says no' do
-      airport = double :airport, {:okay_to_land? => false}  #, :land => plane.confirm_landing}
+      airport = double :airport, {:let_land => false}  #, :land => plane.confirm_landing}
       plane.land_at airport
       expect(plane.status).to eq "flying"
     end
@@ -64,15 +67,34 @@ describe Plane do
       expect(plane.status).to eq "flying"
     end
 
-    
+    it 'can do non-requested take-off if weather okay' do
+      plane.stub(weather_good?: true)
+      airport = double :airport, { :confirm_took_off => nil }
+      plane.confirm_landing
+      plane.take_off_from airport
+      expect(plane.status).to eq "flying"
+    end
 
-  # it 'can do non-requested take-off if weather okay' do
+    it 'cannot take-off if weather stormy' do
+      plane.stub(weather_good?: false)
+      plane.confirm_landing
+      plane.take_off_from airport
+      expect(plane.status).to eq "landed"
+    end
 
-  # end
+    it 'returns message if too stormy to take-off' do
+      plane.stub(weather_good?: false)
+      plane.confirm_landing
+      expect(plane.take_off_from airport).to eq "Sorry. Too Stormy to take off"
+    end
 
-  # it 'informs airport that has taken off after non-requested take-off' do
 
-  # end 
+    it 'informs airport of non-requested take-off' do
+      plane.stub(weather_good?: true)
+      plane.confirm_landing
+      expect(airport).to receive(:confirm_took_off).with (plane)
+      plane.take_off_from airport
+    end 
 
   end  
 
